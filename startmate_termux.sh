@@ -21,6 +21,6 @@ sleep 1
 export PULSE_SERVER=127.0.0.1
 
 # Run XFCE4 Desktop
-env DISPLAY=:0 dbus-launch --exit-with-session mate-session & > /dev/null 2>&1
+env DISPLAY=:0 dbus-launch --exit-with-session xfce4-session & > /dev/null 2>&1
 
 exit 0
