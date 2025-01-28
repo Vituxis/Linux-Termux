@@ -24,18 +24,34 @@ jobs:
             cmd /c start.bat
           } else {
             Write-Host "Arquivo start.bat não encontrado. Verifique a configuração."
-          }
 
       - name: Monitor and Restart AnyDesk if Needed
         run: |
+          # Importa o módulo necessário
+          Import-Module Microsoft.PowerShell.Security
           # Monitora a conexão do AnyDesk e reinicia se necessário
           while ($true) {
+            # Verifica se o processo do AnyDesk está rodando
             $process = Get-Process -Name "AnyDesk" -ErrorAction SilentlyContinue
             if (-not $process) {
               Write-Host "AnyDesk não está rodando, reiniciando..."
-              cmd /c start.bat
+              if (Test-Path "start.bat") {
+                cmd /c start.bat
+              } else {
+                Write-Host "Arquivo start.bat não encontrado. Verifique a configuração."
+              }
             }
-            Start-Sleep -Seconds 300  # Verifica a cada 5 minutos
+
+            # Pausa condicional
+            if (Test-Path "pause.txt") {
+              Write-Host "Pausa detectada. Esperando remoção de 'pause.txt' para continuar."
+              while (Test-Path "pause.txt") {
+                Start-Sleep -Seconds 60  # Verifica a cada 1 minuto
+              }
+              Write-Host "Retomando execução."
+            }
+
+            Start-Sleep -Seconds 300  # Verifica o AnyDesk a cada 5 minutos
           }
 
       - name: Time Counter (Long Running Task)
